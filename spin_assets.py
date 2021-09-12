@@ -11,7 +11,7 @@ FPS = 60
 PLAYER_SIDE = 50
 ENEM_SIDE = 50
 LSER_W, LSER_H = 100, 90
-VEL = 5
+VEL = 10
 PLAYER_COOLDOWN = 20
 
 BACKGROUND_IMAGE = os.path.join('assets', 'background-black.png')
