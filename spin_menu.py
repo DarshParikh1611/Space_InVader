@@ -2,7 +2,7 @@ import pygame
 from spin_menu_buttons import Button
 from spin_assets import SPIN_ASSET_LOADING as ASSET
 from spin_settings import SettingsPage as setting_pge
-from space_invader import SpaceInvaderGame as actual_game
+from spin_game import SpaceInvaderGame as actual_game
 
 def page_opener(page_prompt, page_screen):                                      #? Just send events over?
     if page_prompt == "Start_Game":
