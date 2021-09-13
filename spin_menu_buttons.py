@@ -1,10 +1,5 @@
 import pygame
-from pygame.constants import USEREVENT
-
-GamePlay = USEREVENT + 1
-OpenSettings = USEREVENT + 2
-CustomPlay = USEREVENT + 3
-MenuReturn = USEREVENT + 4
+import spin_events as SEVE
 
 class Button:
     B_COLOR = (255, 255, 255)
@@ -59,13 +54,13 @@ class Button:
 
         if clicked_smth:
             for e in pygame.event.get():
-                if e.type == GamePlay:
+                if e.type == SEVE.GAME_PLAY:
                     string_prompt = "Start_Game"
-                elif e.type == OpenSettings:
+                elif e.type == SEVE.OPEN_SETTINGS:
                     string_prompt = "Open_Settings"
-                elif e.type == CustomPlay:
+                elif e.type == SEVE.CUSTOM_PLAY:
                     string_prompt = "Create_Custom"
-                elif e.type == MenuReturn:
+                elif e.type == SEVE.MENU_RETURN:
                     string_prompt =  "Back_Menu"
         else:
             string_prompt = "nothing to do"
@@ -106,7 +101,7 @@ class _SettingsButton(Button):
         super().__init__(s_screen, s_spawn_loc, s_spawn_size)
     
     def is_clicked(self):
-        pygame.event.post(pygame.event.Event(OpenSettings, message = f"{self} was clicked"))
+        pygame.event.post(SEVE.Open_Settings)
 
     def __repr__(self):
         return "The Settings button"
@@ -116,7 +111,7 @@ class _PlayButton(Button):
         super().__init__(p_screen, p_spawn_loc, p_spawn_size)
     
     def is_clicked(self):
-        pygame.event.post(pygame.event.Event(GamePlay, message = f"{self} was clicked"))
+        pygame.event.post(SEVE.Game_Play)
 
     def __repr__(self):
         return "The Play button"
@@ -126,7 +121,7 @@ class _CustomPlayButton(Button):
         super().__init__(c_screen, c_spawn_loc, c_spawn_size)
 
     def is_clicked(self):
-        pygame.event.post(pygame.event.Event(CustomPlay, message = f"{self} was clicked"))
+        pygame.event.post(SEVE.Custom_Play)
 
     def __repr__(self):
         return "The Custom Play button"
@@ -136,7 +131,7 @@ class _MenuReturner(Button):
         super().__init__(m_screen, m_spawn_loc, m_spawn_size)
 
     def is_clicked(self):
-        pygame.event.post(pygame.event.Event(MenuReturn, message = f"{self} was clicked"))
+        pygame.event.post(SEVE.Menu_Return)
 
     def __repr__(self):
         return "The Return to Menu button"

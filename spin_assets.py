@@ -26,7 +26,7 @@ LASER_RED_IMAGE = os.path.join('assets', 'pixel_laser_red.png')
 LASER_BLUE_IMAGE = os.path.join('assets', 'pixel_laser_blue.png')
 LASER_PLAYER_IMAGE = os.path.join('assets', 'pixel_laser_yellow.png')
 
-class SPIN_ASSET_LOADING:
+class SPIN_ASSET_LOADING:                                                       #TODO: Make a screen centre coordinate
 
     @staticmethod
     def spin_w():

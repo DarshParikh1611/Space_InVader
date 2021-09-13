@@ -1,25 +1,20 @@
 import pygame as pg; pg.font.init(); pg.mixer.init()
-from pygame.constants import USEREVENT
 from spin_assets import SPIN_ASSET_LOADING as AST
 import game_members as gm
+import spin_events as SEVE
 
 player_side = AST.pl_side()
 win_xy = AST.spin_xy(); bagrnd = AST.bg_img(); 
 speed = AST.get_vel(); fps = AST.get_fps()
 SCORE_FONT = pg.font.SysFont("segoeprint", 20)
 
-ALL_DEAD = USEREVENT + 1
-SCORE_INCREASE = USEREVENT + 2
-INVADED = USEREVENT + 3
-All_Dead = pg.event.Event(ALL_DEAD, message = "All Players are Dead :(")
-Score_Increase = pg.event.Event(SCORE_INCREASE, message = "Great, you killed another one!")
-Invaded = pg.event.Event(INVADED, message = "The Enemies Invaded :(")
 
 def img_loadscale(img, dimensions, rotate=0):
     loaded_img = pg.image.load(img)
     scaled_img = pg.transform.scale(loaded_img, dimensions)
     transformed_img = pg.transform.rotate(scaled_img, rotate)
     return transformed_img
+
 
 class SpaceInvaderGame:
     clock = pg.time.Clock()
@@ -71,15 +66,11 @@ class SpaceInvaderGame:
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     run = False
-                elif e.type == ALL_DEAD:
+                elif e.type == SEVE.GAME_OVER:
                     print(e.message)
                     pg.time.delay(20)
                     cls.game_over()
-                elif e.type == INVADED:
-                    print(e.message)
-                    pg.time.delay(20)
-                    cls.game_over()
-                elif e.type == SCORE_INCREASE:
+                elif e.type == SEVE.SCORE_INCREASE:
                     cls.session_score += 10
                     
             gm.Player.remove_killed()

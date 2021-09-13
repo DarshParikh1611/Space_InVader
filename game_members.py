@@ -1,7 +1,7 @@
 import pygame as pg
-from pygame.constants import USEREVENT
 import random as rndm
 from spin_assets import SPIN_ASSET_LOADING as AST
+import spin_events as SEVE
 
 pl_ship = AST.player_ship(); pl_lser = AST.player_laser()
 green_ship = AST.green_ship(); green_lser = AST.green_laser()
@@ -14,13 +14,6 @@ green_outline = AST.green_outline_clr(); red_outline = AST.red_outline_clr()
 
 RIGHT_EDGE = pg.Rect(win_xy[0], 0, 1, win_xy[1])
 LEFT_EDGE = pg.Rect(-1, 0, 1, win_xy[1])
-
-ALL_DEAD = USEREVENT + 1
-SCORE_INCREASE = USEREVENT + 2
-INVADED = USEREVENT + 3
-All_Dead = pg.event.Event(ALL_DEAD, message = "All Players are Dead :(")
-Score_Increase = pg.event.Event(SCORE_INCREASE, message = "Great, you killed another one!")
-Invaded = pg.event.Event(INVADED, message = "The Enemies Invaded :(")
 
 def list_clearer(some_lst, action="clear"):
     if action == "clear":
@@ -73,7 +66,7 @@ class Player:
                 del p
 
         if cls.all_dead():
-            pg.event.post(All_Dead)
+            pg.event.post(SEVE.All_Dead)
 
     @classmethod
     def all_dead(cls):
@@ -354,7 +347,7 @@ class Enemies:
                 for j in cls.all_elist:
                     j.set_enemheight(enem_dst, "down")
             if i.get_enemloc()[1] == i.get_curr_escr_xy()[1]:
-                pg.event.post(Invaded)
+                pg.event.post(SEVE.Invaded)
                 enem_invaded = True
                 break
         if not enem_invaded:
@@ -435,7 +428,7 @@ class Enemies:
             if l.get_lrect().colliderect(enem_obj) and l.get_ltype() == Player:
                 self.enem_destroy()
                 l.lser_delete()
-                pg.event.post(Score_Increase)
+                pg.event.post(SEVE.Score_Increase)
     
     def enem_player_coll(self, the_players):
         for p in the_players:
