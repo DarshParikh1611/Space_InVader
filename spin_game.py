@@ -2,13 +2,12 @@ import pygame as pg; pg.font.init(); pg.mixer.init()
 from spin_assets import SPIN_ASSET_LOADING as AST
 import game_members as gm
 import spin_events as SEVE
-import spin_functions as sfunc
 
 player_side = AST.pl_side() 
 speed = AST.get_vel(); fps = AST.get_fps()
-SCORE_FONT = pg.font.SysFont("segoeprint", 20)
 
 class SpaceInvaderGame:
+    SCORE_FONT = pg.font.SysFont("segoeprint", 20)
     clock = pg.time.Clock()
     session_score = 0
     max_enem = 5
@@ -18,8 +17,8 @@ class SpaceInvaderGame:
     def game_over(cls):
         cls.is_game_over = True
 
-    @staticmethod
-    def game_display(dis_scrn, bckgrnd, pl, enem_class, laser_class, gme_score):
+    @classmethod
+    def game_display(cls, dis_scrn, bckgrnd, pl, enem_class, laser_class, gme_score):
         # dis_scrn.fill((0,0,0))
         dis_scrn.blit(bckgrnd, (0,0))
         pl.all_player_draw()
@@ -27,7 +26,7 @@ class SpaceInvaderGame:
         enem_class.auto_enem_draw()
         laser_class.auto_lser_draw()    
 
-        score_txt = SCORE_FONT.render(f"Score: {gme_score}", 1, (255,255,255))
+        score_txt = cls.SCORE_FONT.render(f"Score: {gme_score}", 1, (255,255,255))
         dis_scrn.blit(
             score_txt, (10, enem_class.get_spawn_area().get_spr_xy()[1] - 10)
         )                                                                       #FIXME: x,y needs to be more accurate
@@ -97,8 +96,3 @@ class SpaceInvaderGame:
         gm.Player.clear_players(what_action="delete")
         gm.Enemies.clear_enemies(what_action="delete")
         gm.Laser.clear_lasers(what_action="delete")
-
-
-if __name__ == '__main__':
-    dummy_screen = pg.display.set_mode(AST.spin_xy())
-    SpaceInvaderGame.start_game(dummy_screen)

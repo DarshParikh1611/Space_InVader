@@ -19,8 +19,8 @@ class SettingsPage:
         pygame.display.update()
 
     @classmethod
-    def settings_open(cls, settings_window):
-        cls.settings_page(settings_window)
+    def settings_open(cls, settings_window, setting_background):
+        cls.settings_page(settings_window, setting_background)
 
     @classmethod
     def settings_page(cls, settings_win, settings_bg):
@@ -46,7 +46,3 @@ class SettingsPage:
             cls.settings_draw(settings_win, settings_bg, Button)
         
         Button.clear_buttons()
-
-if __name__ == '__main__':
-    dummy_screen = pygame.display.set_mode(ASSET.spin_xy())
-    SettingsPage.settings_open(dummy_screen)
