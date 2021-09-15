@@ -2,19 +2,11 @@ import pygame as pg; pg.font.init(); pg.mixer.init()
 from spin_assets import SPIN_ASSET_LOADING as AST
 import game_members as gm
 import spin_events as SEVE
+import spin_functions as sfunc
 
-player_side = AST.pl_side()
-win_xy = AST.spin_xy(); bagrnd = AST.bg_img(); 
+player_side = AST.pl_side() 
 speed = AST.get_vel(); fps = AST.get_fps()
 SCORE_FONT = pg.font.SysFont("segoeprint", 20)
-
-
-def img_loadscale(img, dimensions, rotate=0):
-    loaded_img = pg.image.load(img)
-    scaled_img = pg.transform.scale(loaded_img, dimensions)
-    transformed_img = pg.transform.rotate(scaled_img, rotate)
-    return transformed_img
-
 
 class SpaceInvaderGame:
     clock = pg.time.Clock()
@@ -43,16 +35,16 @@ class SpaceInvaderGame:
         pg.display.update()
 
     @classmethod
-    def start_game(cls, game_window):
-        cls.space_inVader(game_window)
+    def start_game(cls, game_window, game_background):
+        cls.space_inVader(game_window, game_background)
 
     @classmethod
-    def space_inVader(cls, game_win):
-        bckgrnd_img = img_loadscale(bagrnd, win_xy)
+    def space_inVader(cls, game_win, game_bg):
         extra_time_counter = 0
         cls.session_score = 0
         run = True
         cls.is_game_over = False
+        gave_up = False
 
         gm.Player.clear_players()
         gm.Enemies.clear_enemies()
@@ -66,6 +58,7 @@ class SpaceInvaderGame:
             for e in pg.event.get():
                 if e.type == pg.QUIT:
                     run = False
+                    gave_up = True
                 elif e.type == SEVE.GAME_OVER:
                     print(e.message)
                     pg.time.delay(20)
@@ -90,12 +83,15 @@ class SpaceInvaderGame:
             gm.Player.all_player_cooldown()
 
             cls.game_display(
-                game_win, bckgrnd_img, gm.Player, gm.Enemies, gm.Laser, cls.session_score
+                game_win, game_bg, gm.Player, gm.Enemies, gm.Laser, cls.session_score
             )
 
             extra_time_counter += 1
 
-        print(f"well played! You scored {cls.session_score} points")
+        if gave_up:
+            print("LOSER")
+        else:
+            print(f"well played! You scored {cls.session_score} points")
 
         del events
         gm.Player.clear_players(what_action="delete")

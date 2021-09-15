@@ -2,6 +2,7 @@ import pygame as pg
 import random as rndm
 from spin_assets import SPIN_ASSET_LOADING as AST
 import spin_events as SEVE
+import spin_functions as sfuncs
 
 pl_ship = AST.player_ship(); pl_lser = AST.player_laser()
 green_ship = AST.green_ship(); green_lser = AST.green_laser()
@@ -25,14 +26,9 @@ def list_clearer(some_lst, action="clear"):
     else:
         print("Not a valid action")
 
-def img_loadscale(img, dimensions, rotate=0):
-    loaded_img = pg.image.load(img)
-    scaled_img = pg.transform.scale(loaded_img, dimensions)
-    transformed_img = pg.transform.rotate(scaled_img, rotate)
-    return transformed_img
 
 class Player:
-    P_IMG = img_loadscale(pl_ship, pl_xy)
+    P_IMG = sfuncs.img_loadscale(pl_ship, pl_xy)
     P_OUTLINE = pl_outline
     PL_COOLDOWN = cooldown
     MAX_HEALTH = 100
@@ -188,9 +184,9 @@ class Player:
         return "The Main Players"
 
 class Laser:
-    P_LASER_IMG = img_loadscale(pl_lser, lser_xy)
-    G_LASER_IMG = img_loadscale(green_lser, lser_xy)
-    R_LASER_IMG = img_loadscale(red_lser, lser_xy)
+    P_LASER_IMG = sfuncs.img_loadscale(pl_lser, lser_xy)
+    G_LASER_IMG = sfuncs.img_loadscale(green_lser, lser_xy)
+    R_LASER_IMG = sfuncs.img_loadscale(red_lser, lser_xy)
     l_OPTIONS = [P_LASER_IMG, G_LASER_IMG, R_LASER_IMG]
     laser_lst = []
 
@@ -295,9 +291,9 @@ class SpawnLocater:
         return coll_bool
 
 class Enemies:
-    G_SHIP_IMG = img_loadscale(green_ship, e_xy, rotate=180)
+    G_SHIP_IMG = sfuncs.img_loadscale(green_ship, e_xy, rotate=180)
     G_OUTLINE = green_outline
-    R_SHIP_IMG = img_loadscale(red_ship, e_xy, rotate=180)
+    R_SHIP_IMG = sfuncs.img_loadscale(red_ship, e_xy, rotate=180)
     R_OUTLINE = red_outline
     OPTION = [(G_SHIP_IMG, G_OUTLINE, "Green"), (R_SHIP_IMG, R_OUTLINE, "Red")]
     all_elist = []

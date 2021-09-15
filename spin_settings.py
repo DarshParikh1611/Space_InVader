@@ -11,8 +11,9 @@ class SettingsPage:
         return page_running
 
     @staticmethod
-    def settings_draw(settings_window, all_buttons):
+    def settings_draw(settings_window, settings_background, all_buttons):
         settings_window.fill((0,0,0))
+        settings_window.blit(settings_background, (0,0))
         all_buttons.all_button_draw()
 
         pygame.display.update()
@@ -22,9 +23,9 @@ class SettingsPage:
         cls.settings_page(settings_window)
 
     @classmethod
-    def settings_page(cls, settings_win):
+    def settings_page(cls, settings_win, settings_bg):
         sd_x, sd_y = settings_win.get_size()
-        returnToMenu = Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60), (80,50))
+        Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60), (80,50))
         settings_running = True
         mouse_up, mouse_down = (-1, -1), (-1, -1)
 
@@ -42,7 +43,7 @@ class SettingsPage:
                 settings_running = cls.menu_returner(what_clicked, settings_running)
                 mouse_up, mouse_down = (-1, -1), (-1, -1)
 
-            cls.settings_draw(settings_win, Button)
+            cls.settings_draw(settings_win, settings_bg, Button)
         
         Button.clear_buttons()
 

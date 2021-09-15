@@ -4,16 +4,16 @@ from spin_assets import SPIN_ASSET_LOADING as ASSET
 from spin_settings import SettingsPage as setting_pge
 from spin_game import SpaceInvaderGame as actual_game
 
-def page_opener(page_prompt, page_screen):                                      #? Just send events over?
+def page_opener(page_prompt, page_screen, page_background):
     if page_prompt == "Start_Game":
         menu_button_backup = Button.button_backup()
         Button.clear_buttons()
-        actual_game.start_game(page_screen)
+        actual_game.start_game(page_screen, page_background)
         Button.button_restore(menu_button_backup)
     elif page_prompt == "Open_Settings":
         menu_button_backup = Button.button_backup()
         Button.clear_buttons()
-        setting_pge.settings_open(page_screen)
+        setting_pge.settings_open(page_screen, page_background)
         Button.button_restore(menu_button_backup)
     elif page_prompt == "Create_Custom":
         print("\nwill create a custom game...\n    Whenever I choose to actually make its program...\n")
@@ -22,13 +22,14 @@ def page_opener(page_prompt, page_screen):                                      
     else:
         print("Not a valid page to go to")
 
-def menu_display(displ_screen, all_buttons):
+def menu_display(displ_screen, background_img, all_buttons):
     displ_screen.fill((0,0,0))
+    displ_screen.blit(background_img, (0,0))    
     all_buttons.all_button_draw()
 
     pygame.display.update()
 
-def main_menu(menu_displ):
+def main_menu(menu_displ, bground):
     mds_x, mds_y = menu_displ.get_size()
     Button.button_maker("settings", menu_displ, (mds_x-60, mds_y-60), (50, 50))
     Button.button_maker("play", menu_displ, (mds_x/2 - 80, mds_y/2 - 50), (80, 50))
@@ -47,10 +48,10 @@ def main_menu(menu_displ):
 
         if (mouse_up != (-1, -1)) and (mouse_down != (-1,-1)):
             what_clicked = Button.check_if_clicked(mouse_up, mouse_down)
-            page_opener(what_clicked, menu_displ)
+            page_opener(what_clicked, menu_displ, bground)
             mouse_up, mouse_down = (-1, -1), (-1, -1)
 
-        menu_display(menu_displ, Button)
+        menu_display(menu_displ, bground, Button)
 
     print(79 * "#")
     print("Regards, Darsh. Happy gaming!! :)")
