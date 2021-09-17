@@ -11,7 +11,7 @@ FPS = 60
 PLAYER_SIDE = 50
 ENEM_SIDE = 50
 LSER_W, LSER_H = 100, 90
-VEL = 5
+VEL = 10
 PLAYER_COOLDOWN = 20
 
 BACKGROUND_IMAGE = os.path.join('assets', 'background-black.png')
@@ -26,7 +26,7 @@ LASER_RED_IMAGE = os.path.join('assets', 'pixel_laser_red.png')
 LASER_BLUE_IMAGE = os.path.join('assets', 'pixel_laser_blue.png')
 LASER_PLAYER_IMAGE = os.path.join('assets', 'pixel_laser_yellow.png')
 
-class SPIN_ASSET_LOADING:
+class SPIN_ASSET_LOADING:                                                       #TODO: Make a screen centre coordinate
 
     @staticmethod
     def spin_w():

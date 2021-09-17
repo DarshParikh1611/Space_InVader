@@ -1,51 +1,43 @@
-import pygame as pg; pg.font.init(); pg.mixer.init()
+import pygame as pg
 import random as rndm
 from spin_assets import SPIN_ASSET_LOADING as AST
+import spin_events as SEVE
+import spin_functions as sfuncs
 
-win_xy = AST.spin_xy(); bagrnd = AST.bg_img(); fps = AST.get_fps()
 pl_ship = AST.player_ship(); pl_lser = AST.player_laser()
 green_ship = AST.green_ship(); green_lser = AST.green_laser()
 red_ship = AST.red_ship(); red_lser = AST.red_laser()
 player_side = AST.pl_side(); enemy_side = AST.enem_side()
 pl_xy = AST.player_xy(); e_xy = AST.enem_xy(); lser_xy = AST.laser_xy()
-cooldown = AST.pl_cooldown(); speed = AST.get_vel()
+cooldown = AST.pl_cooldown(); win_xy = AST.spin_xy()
 pl_outline = AST.player_outline()
 green_outline = AST.green_outline_clr(); red_outline = AST.red_outline_clr()
-SCORE_FONT = pg.font.SysFont("segoeprint", 20)
-SPIN_WIN = pg.display.set_mode(win_xy)
-pg.display.set_caption("Space InVader ;)")
+
 RIGHT_EDGE = pg.Rect(win_xy[0], 0, 1, win_xy[1])
 LEFT_EDGE = pg.Rect(-1, 0, 1, win_xy[1])
 
-def img_loadscale(img, dimensions, rotate=0):
-    loaded_img = pg.image.load(img)
-    scaled_img = pg.transform.scale(loaded_img, dimensions)
-    transformed_img = pg.transform.rotate(scaled_img, rotate)
-    return transformed_img
-
-def game_display(dis_scrn, bckgrnd, pl, enemy_class, laser_class, gme_score):
-    # dis_scrn.fill((0,0,0))
-    dis_scrn.blit(bckgrnd, (0,0))
-    pl.all_player_draw()
-    pl_hlth = pl.all_players[0].get_health()                                                # TODO: move this into player class itself
-
-    enemy_class.auto_enem_draw()
-    laser_class.auto_lser_draw()    
-
-    score_txt = SCORE_FONT.render(f"Score: {gme_score}", 1, (255,255,255))
-    dis_scrn.blit(score_txt, (10, win_xy[1] - 50))
-    health_txt = SCORE_FONT.render(f"Health: {pl_hlth}", 1, (255,255,255))
-    dis_scrn.blit(health_txt, ((win_xy[0] - 135, win_xy[1] - 50)))
-
-    pg.display.update()
+def list_clearer(some_lst, action="clear"):
+    if action == "clear":
+        some_lst.clear()
+    elif action == "delete":
+        for i in some_lst:
+            del i
+        del some_lst
+    else:
+        print("Not a valid action")
 
 
 class Player:
-    P_IMG = img_loadscale(pl_ship, pl_xy)
+    P_IMG = sfuncs.img_loadscale(pl_ship, pl_xy)
     P_OUTLINE = pl_outline
     PL_COOLDOWN = cooldown
+    MAX_HEALTH = 100
 
     all_players = []
+
+    @classmethod
+    def clear_players(cls, what_action="clear"):
+        list_clearer(cls.all_players, what_action)
 
     @classmethod
     def all_player_draw(cls):
@@ -69,6 +61,9 @@ class Player:
                 cls.all_players.pop(p)
                 del p
 
+        if cls.all_dead():
+            pg.event.post(SEVE.All_Dead)
+
     @classmethod
     def all_dead(cls):
         if len(cls.all_players) > 0:
@@ -82,10 +77,11 @@ class Player:
         self.side = pl_side
         self.pl_img = Player.P_IMG
         self.rect = self.pl_img.get_rect()
-        tempx, tempy = (self.pscr_x/2-self.side/2), (self.pscr_y-self.side-20)
+        tempx, tempy = (self.pscr_x/2-self.side/2), (self.pscr_y-self.side-20)  #* some formula
         self.rect.topleft = tempx, tempy
-        self.health = 100
+        self.health = Player.MAX_HEALTH
         self.cooldown_count = 0
+        self.health_bar = pg.Rect(tempx, tempy + self.side, self.side, 10)      #* 10 --> formula...
 
         Player.all_players.append(self)
 
@@ -108,8 +104,12 @@ class Player:
         return self.rect.x, self.rect.y
     
     def set_plloc(self, direc, dst):
-        if direc == "left": self.rect.x -= dst
-        if direc == "right": self.rect.x += dst
+        if direc == "left": 
+            self.rect.x -= dst
+            self.health_bar.x -= dst
+        if direc == "right": 
+            self.rect.x += dst
+            self.health_bar.x += dst
 
     def get_health(self):
         return self.health
@@ -122,6 +122,9 @@ class Player:
 
     def set_cooldown_count(self, cd_val):
         self.cooldown_count = cd_val
+    
+    def get_pl_indx(self):
+        return Player.all_players.index(self)
 
     def is_dead(self):
         if self.get_health() == 0:
@@ -132,9 +135,9 @@ class Player:
     def pl_move(self, pl_move_direction, distance):
         pl_locx = self.get_plloc()[0]
         win_right_edge = self.get_pscr()[0]-self.get_pside()
-        if pl_move_direction == "right" and pl_locx != win_right_edge:
+        if pl_move_direction == "right" and pl_locx < win_right_edge:
             self.set_plloc("right", distance)
-        elif pl_move_direction == "left" and pl_locx != 0:
+        elif pl_move_direction == "left" and pl_locx > 0:
             self.set_plloc("left", distance)
 
     def pl_lsr_coll(self, lasers):
@@ -154,21 +157,42 @@ class Player:
             Laser(self)
             self.set_cooldown_count(Player.PL_COOLDOWN)
 
+    def player_destroy(self):
+        Player.all_players.pop(self.get_pl_indx())
+        del self
+
+    def health_color(self):                                                     #FIXME Cleaner; get colors from outside?
+        curr_health = self.get_health()
+        if curr_health == 0:
+            health_clr = (0, 0, 0)
+        elif curr_health < (33/100 * Player.MAX_HEALTH):
+            health_clr = (255, 0, 0)
+        elif (33/100 * Player.MAX_HEALTH) < curr_health < (66/100 * Player.MAX_HEALTH):
+            health_clr = (255, 255, 0)
+        else:
+            health_clr = (25, 255, 64)
+        return health_clr
+
     def pl_draw(self):
         self.pscreen.blit(self.pl_img, self.get_plloc())
+        pg.draw.rect(self.pscreen, self.health_color(), self.health_bar)        #TODO: Integrate rect and color in one
 
         pl_out = pg.Rect((self.get_plrect().topleft), (self.get_psize()))
         pg.draw.rect(self.pscreen, Player.P_OUTLINE, pl_out, 1)
 
     def __repr__(self):
-        return "The Main Player"
+        return "The Main Players"
 
-class Laser():
-    P_LASER_IMG = img_loadscale(pl_lser, lser_xy)
-    G_LASER_IMG = img_loadscale(green_lser, lser_xy)
-    R_LASER_IMG = img_loadscale(red_lser, lser_xy)
+class Laser:
+    P_LASER_IMG = sfuncs.img_loadscale(pl_lser, lser_xy)
+    G_LASER_IMG = sfuncs.img_loadscale(green_lser, lser_xy)
+    R_LASER_IMG = sfuncs.img_loadscale(red_lser, lser_xy)
     l_OPTIONS = [P_LASER_IMG, G_LASER_IMG, R_LASER_IMG]
     laser_lst = []
+
+    @classmethod
+    def clear_lasers(cls, what_action="clear"):
+        list_clearer(cls.laser_lst, what_action)
 
     @classmethod
     def auto_lser_move(cls, laser_dst):
@@ -187,7 +211,7 @@ class Laser():
             self.l_screen = origin.get_curr_plscreen()
             self.lser_image = Laser.l_OPTIONS[0]
             self.lser_rect = self.lser_image.get_rect()
-            self.lser_rect.x = origin.get_plrect().x - origin.get_pside()/2     # Why do i need to subtract the side-length????
+            self.lser_rect.x = origin.get_plrect().x - origin.get_pside()/2     # Why do I need to subtract the side-length?? Shouldn't I add??
             self.lser_rect.y = origin.get_plrect().y - origin.get_pside()
         elif self.creator == Enemies:
             self.l_screen = origin.get_curr_escreen()
@@ -266,16 +290,20 @@ class SpawnLocater:
                 break
         return coll_bool
 
-class Enemies():
-    G_SHIP_IMG = img_loadscale(green_ship, e_xy, rotate=180)
+class Enemies:
+    G_SHIP_IMG = sfuncs.img_loadscale(green_ship, e_xy, rotate=180)
     G_OUTLINE = green_outline
-    R_SHIP_IMG = img_loadscale(red_ship, e_xy, rotate=180)
+    R_SHIP_IMG = sfuncs.img_loadscale(red_ship, e_xy, rotate=180)
     R_OUTLINE = red_outline
     OPTION = [(G_SHIP_IMG, G_OUTLINE, "Green"), (R_SHIP_IMG, R_OUTLINE, "Red")]
     all_elist = []
     ENEM_DIR = "right"
     ENEM_SIDE = enemy_side
     spawn_loc = SpawnLocater(ENEM_SIDE)
+
+    @classmethod
+    def clear_enemies(cls, what_action="clear"):
+        list_clearer(cls.all_elist, what_action)
 
     @classmethod
     def newe_loc_finder(cls):                                                   #? Could be made better?
@@ -286,7 +314,7 @@ class Enemies():
             while_cntr += 1
             spl.mov_slr_x(50)
 
-        if (while_cntr == len(cls.all_elist)) and (len(cls.all_elist) != 0):  
+        if (while_cntr == len(cls.all_elist)) and (len(cls.all_elist) != 0):
             return None
         else:
             return spl.get_spr_xy()
@@ -300,8 +328,7 @@ class Enemies():
 
     @classmethod
     def auto_shooter(cls, time_cntr, existing_lser_list):
-                                                                                # TODO: Shoot if no existing_lser_list
-        pass
+        pass                                                                    #TODO: Shoot if no existing_lser_list
     
     @classmethod
     def auto_emover(cls, enem_dst):
@@ -315,8 +342,8 @@ class Enemies():
                 cls.ENEM_DIR = "right"
                 for j in cls.all_elist:
                     j.set_enemheight(enem_dst, "down")
-            if i.get_enemloc()[1] == i.get_curr_escr_xy()[1]:                   #? screen from self or global?
-                SpaceInvaderGame.game_over()
+            if i.get_enemloc()[1] == i.get_curr_escr_xy()[1]:
+                pg.event.post(SEVE.Invaded)
                 enem_invaded = True
                 break
         if not enem_invaded:
@@ -333,6 +360,10 @@ class Enemies():
     def auto_enem_draw(cls):
         for drawing_enems in cls.all_elist:
             drawing_enems.enem_draw()
+
+    @classmethod
+    def get_spawn_area(cls):
+        return cls.spawn_loc
 
     def __init__(self, e_scrn, e_side, e_spawnxy):
         self.escreen = e_scrn
@@ -393,7 +424,7 @@ class Enemies():
             if l.get_lrect().colliderect(enem_obj) and l.get_ltype() == Player:
                 self.enem_destroy()
                 l.lser_delete()
-                SpaceInvaderGame.session_score += 10
+                pg.event.post(SEVE.Score_Increase)
     
     def enem_player_coll(self, the_players):
         for p in the_players:
@@ -412,59 +443,3 @@ class Enemies():
 
     def __repr__(self):
         return f"{self.get_colorgrp()[2]} Enemy"
-
-class SpaceInvaderGame:
-    bckgrnd_img = img_loadscale(bagrnd, win_xy)
-    clock = pg.time.Clock()
-    session_score = 0
-    max_enem = 5
-    is_game_over = False
-
-    @classmethod
-    def game_over(cls):
-        cls.is_game_over = True
-
-    @classmethod
-    def space_inVader(cls, game_draw_win):
-        extra_time_counter = 0
-        cls.session_score = 0
-        main_player = Player(game_draw_win, player_side)
-        run = True
-        cls.is_game_over = False
-
-        while run and (not cls.is_game_over):
-            cls.clock.tick(fps)
-            
-            for e in pg.event.get():
-                if e.type == pg.QUIT:
-                    run = False
-
-            Player.remove_killed()
-            if Player.all_dead():
-                print("Game Over")
-                pg.time.delay(20)
-                cls.game_over()
-                continue
-
-            events = pg.key.get_pressed()
-            if events[pg.K_d]:main_player.pl_move("right", speed)
-            if events[pg.K_a]:main_player.pl_move("left", speed)
-            if events[pg.K_SPACE]:main_player.pl_shoot()
-
-            Enemies.enem_generator(game_draw_win, cls.max_enem)
-            Enemies.enem_coll(Laser.laser_lst, Player.all_players)
-            Enemies.auto_emover(speed)
-            Enemies.auto_shooter(extra_time_counter, Laser.laser_lst)
-
-            Laser.auto_lser_move(speed)
-
-            Player.all_player_cooldown()
-
-            game_display(game_draw_win, cls.bckgrnd_img, Player, Enemies, Laser, cls.session_score)
-
-            extra_time_counter += 1
-        
-        print(f"well played! You scored {cls.session_score} points")
-
-if __name__ == '__main__':
-    SpaceInvaderGame.space_inVader(SPIN_WIN)
