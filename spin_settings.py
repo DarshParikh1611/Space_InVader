@@ -7,7 +7,6 @@ class SettingsPage:
     def menu_returner(text_prompt, page_running):
         if text_prompt == "Back_Menu":
             page_running = False
-
         return page_running
 
     @staticmethod
@@ -25,7 +24,7 @@ class SettingsPage:
     @classmethod
     def settings_page(cls, settings_win, settings_bg):
         sd_x, sd_y = settings_win.get_size()
-        Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60), (80,50))
+        Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60))
         settings_running = True
         mouse_up, mouse_down = (-1, -1), (-1, -1)
 

@@ -5,9 +5,15 @@ import spin_events as SEVE
 
 player_side = AST.pl_side() 
 speed = AST.get_vel(); fps = AST.get_fps()
+score_txt_fnt = AST.score_font()
+backup_score_txt_fnt = AST.backup_score_font()
 
 class SpaceInvaderGame:
-    SCORE_FONT = pg.font.SysFont("segoeprint", 20)
+    try:
+        SCORE_FONT = pg.freetype.Font(score_txt_fnt, 20)
+    except:
+        print("Couln't use the intended font for score display")
+        SCORE_FONT = pg.font.Font(backup_score_txt_fnt, 20)
     clock = pg.time.Clock()
     session_score = 0
     max_enem = 5

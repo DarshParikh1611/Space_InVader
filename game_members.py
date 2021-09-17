@@ -329,7 +329,7 @@ class Enemies:
     @classmethod
     def auto_shooter(cls, time_cntr, existing_lser_list):
         pass                                                                    #TODO: Shoot if no existing_lser_list
-    
+
     @classmethod
     def auto_emover(cls, enem_dst):
         enem_invaded = False

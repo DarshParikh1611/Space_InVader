@@ -5,9 +5,11 @@ from spin_settings import SettingsPage as setting_pge
 from spin_game import SpaceInvaderGame as actual_game
 import spin_custom as custom_pge
 
+menu_txt_fnt = ASSET.menu_font()
+
 class MenuPage:
     TOP_TEXT = "SPACE INVADERS"
-    MENU_FONT = pygame.font.SysFont("segoeprint", 50)
+    MENU_FONT = pygame.font.Font(menu_txt_fnt, 50)
     MENU_TEXT = MENU_FONT.render(TOP_TEXT, 1, (255,255,255))
 
     @staticmethod
@@ -20,15 +22,13 @@ class MenuPage:
             setting_pge.settings_open(page_screen, page_background)
         elif page_prompt == "Create_Custom":
             custom_pge.custom_page(page_screen, page_background)
-        else:
-            print("Not a valid page to go to")
         Button.button_restore(menu_button_backup)
 
     @classmethod
     def menu_display(cls, displ_screen, background_img, all_buttons):
         displ_screen.fill((0,0,0))
         displ_screen.blit(background_img, (0,0)) 
-        displ_screen.blit(cls.MENU_TEXT, (10,10))                                 #TODO: Give an actual equation
+        displ_screen.blit(cls.MENU_TEXT, (10,10))                               #TODO: Give an actual equation
         all_buttons.all_button_draw()
 
         pygame.display.update()
@@ -36,9 +36,9 @@ class MenuPage:
     @classmethod
     def main_menu(cls, menu_displ, bground):
         mds_x, mds_y = menu_displ.get_size()
-        Button.button_maker("settings", menu_displ, (mds_x-60, mds_y-60), (50, 50))
-        Button.button_maker("play", menu_displ, (mds_x/2 - 80, mds_y/2 - 50), (80, 50))
-        Button.button_maker("custom play", menu_displ, (mds_x/2 + 80, mds_y/2 - 50), (80, 50))
+        Button.button_maker("settings", menu_displ, (mds_x-60, mds_y-60))
+        Button.button_maker("play", menu_displ, (mds_x/2 - 80, mds_y/2 - 50))
+        Button.button_maker("custom play", menu_displ, (mds_x/2 + 80, mds_y/2 - 50))
         menu_running = True
         mouse_up, mouse_down = (-1, -1), (-1, -1)
 
@@ -60,4 +60,3 @@ class MenuPage:
 
         print(79 * "#" + "\n" + "Regards, Darsh. Happy gaming!! :)")
         Button.clear_buttons()
-

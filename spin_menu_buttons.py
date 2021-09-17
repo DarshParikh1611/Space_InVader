@@ -24,15 +24,15 @@ class Button:
         cls.butt_lst.clear()
 
     @classmethod
-    def button_maker(cls, button_type, b_screen, xy_loc_tuple, dimension_tuple):
+    def button_maker(cls, button_type, b_screen, xy_loc_tuple):
         if button_type == "settings":
-            newly_created_button = _SettingsButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _SettingsButton(b_screen, xy_loc_tuple, (50,50))
         elif button_type == "custom play":
-            newly_created_button = _CustomPlayButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _CustomPlayButton(b_screen, xy_loc_tuple, (80,50))
         elif button_type == "play":
-            newly_created_button = _PlayButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _PlayButton(b_screen, xy_loc_tuple, (80,50))
         elif button_type == "return to menu":
-            newly_created_button = _MenuReturner(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _MenuReturner(b_screen, xy_loc_tuple, (80,50))
         else:
             print("No button of that type...")
             newly_created_button = None                                         #? Could cause problems? Any better way of making this not work?

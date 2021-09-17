@@ -26,8 +26,13 @@ LASER_RED_IMAGE = os.path.join('assets', 'pixel_laser_red.png')
 LASER_BLUE_IMAGE = os.path.join('assets', 'pixel_laser_blue.png')
 LASER_PLAYER_IMAGE = os.path.join('assets', 'pixel_laser_yellow.png')
 
-class SPIN_ASSET_LOADING:                                                       #TODO: Make a screen centre coordinate
+MENU_FONT = os.path.join('fonts', 'OCRAEXT.TTF')
+BUTTON_FONT = os.path.join('fonts', '8514sys.fon')
+BACKUP_BUTTON_FONT = os.path.join('fonts', 'backup', 'GOST_common.ttf')
+SCORE_FONT = os.path.join('fonts', 'ROGFonts-Regular.otf')
+BACKUP_SCORE_FONT = os.path.join('fonts', 'backup', 'GOST_common.ttf')
 
+class SPIN_ASSET_LOADING:                                                       # Make a screen centre coordinate?
     @staticmethod
     def spin_w():
         return SPIN_WIDTH
@@ -127,3 +132,23 @@ class SPIN_ASSET_LOADING:                                                       
     @staticmethod
     def green_outline_clr():
         return GREEN_OUTLINE
+    
+    @staticmethod
+    def menu_font():
+        return MENU_FONT
+    
+    @staticmethod
+    def button_font():
+        return BUTTON_FONT
+
+    @staticmethod
+    def backup_button_font():
+        return BACKUP_BUTTON_FONT
+
+    @staticmethod
+    def score_font():
+        return SCORE_FONT
+
+    @staticmethod
+    def backup_score_font():
+        return BACKUP_SCORE_FONT
