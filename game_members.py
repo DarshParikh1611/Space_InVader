@@ -58,7 +58,7 @@ class Player:
     def remove_killed(cls):
         for p in cls.all_players:
             if p.is_dead():
-                cls.all_players.pop(p)
+                cls.all_players.pop(cls.all_players.index(p))
                 del p
 
         if cls.all_dead():
@@ -77,7 +77,7 @@ class Player:
         self.side = pl_side
         self.pl_img = Player.P_IMG
         self.rect = self.pl_img.get_rect()
-        tempx, tempy = (self.pscr_x/2-self.side/2), (self.pscr_y-self.side-20)  #* some formula
+        tempx, tempy = (self.pscr_x/2 - self.side/2), (self.pscr_y - self.side - 20)  #* some formula
         self.rect.topleft = tempx, tempy
         self.health = Player.MAX_HEALTH
         self.cooldown_count = 0
@@ -126,6 +126,11 @@ class Player:
     def get_pl_indx(self):
         return Player.all_players.index(self)
 
+    def updated_health_bar(self):
+        changed_lenght = (self.get_health() / 100) * self.side
+        self.health_bar.width = changed_lenght
+        return self.health_bar
+
     def is_dead(self):
         if self.get_health() == 0:
             return True
@@ -161,7 +166,7 @@ class Player:
         Player.all_players.pop(self.get_pl_indx())
         del self
 
-    def health_color(self):                                                     #FIXME Cleaner; get colors from outside?
+    def health_color(self):
         curr_health = self.get_health()
         if curr_health == 0:
             health_clr = (0, 0, 0)
@@ -175,7 +180,7 @@ class Player:
 
     def pl_draw(self):
         self.pscreen.blit(self.pl_img, self.get_plloc())
-        pg.draw.rect(self.pscreen, self.health_color(), self.health_bar)        #TODO: Integrate rect and color in one
+        pg.draw.rect(self.pscreen, self.health_color(), self.updated_health_bar())
 
         pl_out = pg.Rect((self.get_plrect().topleft), (self.get_psize()))
         pg.draw.rect(self.pscreen, Player.P_OUTLINE, pl_out, 1)
@@ -430,7 +435,7 @@ class Enemies:
         for p in the_players:
             if p.get_plrect().colliderect(self.get_enemrect()):
                 self.enem_destroy()
-                p.player_destroy()
+                p.set_health(p.get_health() - 10)
 
     def coll_with_enem(self, other_enem):
         return self.get_enemrect().colliderect(other_enem.get_enemrect())

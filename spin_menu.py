@@ -11,6 +11,7 @@ class MenuPage:
     TOP_TEXT = "SPACE INVADERS"
     MENU_FONT = pygame.font.Font(menu_txt_fnt, 50)
     MENU_TEXT = MENU_FONT.render(TOP_TEXT, 1, (255,255,255))
+    MTXT_width, MTXT_height = MENU_TEXT.get_size()
 
     @staticmethod
     def page_opener(page_prompt, page_screen, page_background):
@@ -27,18 +28,26 @@ class MenuPage:
     @classmethod
     def menu_display(cls, displ_screen, background_img, all_buttons):
         displ_screen.fill((0,0,0))
-        displ_screen.blit(background_img, (0,0)) 
-        displ_screen.blit(cls.MENU_TEXT, (10,10))                               #TODO: Give an actual equation
+        displ_screen.blit(background_img, (0,0))
+        
+        midt, ht = cls.MTXT_width / 2, cls.MTXT_height
+        midx, hx = displ_screen.get_width() / 2, displ_screen.get_height()
+        tx, ty = midx - midt, hx - (hx/2) - ht
+        displ_screen.blit(cls.MENU_TEXT, (tx, ty))
+        
         all_buttons.all_button_draw()
-
+        
         pygame.display.update()
 
     @classmethod
     def main_menu(cls, menu_displ, bground):
         mds_x, mds_y = menu_displ.get_size()
-        Button.button_maker("settings", menu_displ, (mds_x-60, mds_y-60))
-        Button.button_maker("play", menu_displ, (mds_x/2 - 80, mds_y/2 - 50))
-        Button.button_maker("custom play", menu_displ, (mds_x/2 + 80, mds_y/2 - 50))
+        settings_x, settings_y = mds_x - 60, mds_y - 60
+        play_x, play_y = (mds_x / 2) - 80, mds_y - (mds_y / 2) + 50
+        custom_x, custom_y = (mds_x / 2) + 80, mds_y - (mds_y / 2) + 50
+        Button.button_maker("settings", menu_displ, (settings_x, settings_y))
+        Button.button_maker("play", menu_displ, (play_x, play_y))
+        Button.button_maker("custom play", menu_displ, (custom_x, custom_y))
         menu_running = True
         mouse_up, mouse_down = (-1, -1), (-1, -1)
 
