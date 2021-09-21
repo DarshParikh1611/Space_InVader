@@ -1,6 +1,6 @@
 import pygame
 from spin_assets import SPIN_ASSET_LOADING as ASSET
-from spin_menu_buttons import Button
+from spin_buttons import Button
 
 class SettingsPage:
     @staticmethod

@@ -1,5 +1,5 @@
 import pygame
-from spin_menu_buttons import Button
+from spin_buttons import Button
 from spin_assets import SPIN_ASSET_LOADING as ASSET
 from spin_settings import SettingsPage as setting_pge
 from spin_game import SpaceInvaderGame as actual_game
