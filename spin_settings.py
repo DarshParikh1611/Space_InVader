@@ -10,10 +10,10 @@ class SettingsPage:
         return page_running
 
     @staticmethod
-    def settings_draw(settings_window, settings_background, all_buttons):
+    def settings_draw(settings_window, settings_background, buttons_class):
         settings_window.fill((0,0,0))
         settings_window.blit(settings_background, (0,0))
-        all_buttons.all_button_draw()
+        buttons_class.all_button_draw()
 
         pygame.display.update()
 
@@ -24,7 +24,7 @@ class SettingsPage:
     @classmethod
     def settings_page(cls, settings_win, settings_bg):
         sd_x, sd_y = settings_win.get_size()
-        Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60))
+        Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60)) # Creates the Back button
         settings_run = True
         mouse_up, mouse_down = (-1, -1), (-1, -1)
 
@@ -44,4 +44,4 @@ class SettingsPage:
 
             cls.settings_draw(settings_win, settings_bg, Button)
         
-        Button.clear_buttons()
+        Button.clear_buttons()                                                  # Cleanup

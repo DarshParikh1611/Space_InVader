@@ -2,11 +2,14 @@ import pygame as pg; pg.font.init(); pg.mixer.init()
 from spin_assets import SPIN_ASSET_LOADING as AST
 import game_members as gm
 import spin_events as SEVE
+import spin_functions as sfuncs
 
 player_side = AST.pl_side() 
 speed = AST.get_vel(); fps = AST.get_fps()
 score_txt_fnt = AST.score_font()
 backup_score_txt_fnt = AST.backup_score_font()
+player_amount = AST.number_of_players()
+all_keys = AST.control_set()
 
 class SpaceInvaderGame:
     try:
@@ -49,13 +52,21 @@ class SpaceInvaderGame:
         cls.session_score = 0
         run = True
         cls.is_game_over = False
-        gave_up = False
+        gave_up = False                                                         # To check whether game ended normally or was quit
 
         gm.Player.clear_players()
         gm.Enemies.clear_enemies()
         gm.Laser.clear_lasers()
 
-        main_player = gm.Player(game_win, player_side)
+        if player_amount >= 1:                                                  #TODO Improve
+            first_player_controls = sfuncs.keybinds(all_keys[0])
+            first_player = gm.Player(game_win, player_side, first_player_controls)
+            if player_amount >= 2:
+                second_player_controls = sfuncs.keybinds(all_keys[1])
+                second_player = gm.Player(game_win, player_side, second_player_controls)
+            if player_amount == 3:
+                third_player_controls = sfuncs.keybinds(all_keys[2])
+                third_player = gm.Player(game_win, player_side, third_player_controls) 
 
         while run and (not cls.is_game_over):
             cls.clock.tick(fps)
@@ -74,9 +85,7 @@ class SpaceInvaderGame:
             gm.Player.remove_killed()
 
             events = pg.key.get_pressed()
-            if events[pg.K_d]:main_player.pl_move("right", speed)
-            if events[pg.K_a]:main_player.pl_move("left", speed)
-            if events[pg.K_SPACE]:main_player.pl_shoot()
+            gm.Player.player_handler(events, speed)
 
             gm.Enemies.enem_generator(game_win, cls.max_enem)
             gm.Enemies.enem_coll(gm.Laser.laser_lst, gm.Player.all_players)
@@ -98,7 +107,7 @@ class SpaceInvaderGame:
         else:
             print(f"well played! You scored {cls.session_score} points")
 
-        del events
+        del events                                                              
         gm.Player.clear_players(what_action="delete")
         gm.Enemies.clear_enemies(what_action="delete")
         gm.Laser.clear_lasers(what_action="delete")

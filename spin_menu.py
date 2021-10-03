@@ -16,17 +16,17 @@ class MenuPage:
     @staticmethod
     def page_opener(page_prompt, page_screen, page_background):
         menu_button_backup = Button.button_backup()
-        Button.clear_buttons()
+        Button.clear_buttons()                                                  # So as to prevent collisions with buttons on the new page
         if page_prompt == "Start_Game":
-            actual_game.start_game(page_screen, page_background)
+            actual_game.start_game(page_screen, page_background)                # Starts the space invaders game
         elif page_prompt == "Open_Settings":
-            setting_pge.settings_open(page_screen, page_background)
+            setting_pge.settings_open(page_screen, page_background)             # Opens the settings page
         elif page_prompt == "Create_Custom":
-            custom_pge.custom_page(page_screen, page_background)
+            custom_pge.custom_page(page_screen, page_background)                # Opens the custom creation page
         Button.button_restore(menu_button_backup)
 
     @classmethod
-    def menu_display(cls, displ_screen, background_img, all_buttons):
+    def menu_display(cls, displ_screen, background_img, buttons_class):
         displ_screen.fill((0,0,0))
         displ_screen.blit(background_img, (0,0))
         
@@ -35,7 +35,7 @@ class MenuPage:
         tx, ty = midx - midt, hx - (hx/2) - ht
         displ_screen.blit(cls.MENU_TEXT, (tx, ty))
         
-        all_buttons.all_button_draw()
+        buttons_class.all_button_draw()
         
         pygame.display.update()
 

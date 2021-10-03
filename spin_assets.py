@@ -1,4 +1,7 @@
 import os
+# import pygame
+
+CURR_DIR = os.path.dirname(os.path.abspath(__file__))
 
 WHITE = (255,255,255)
 PLAYER_OUTLINE = (160,160,160)
@@ -7,12 +10,20 @@ RED_OUTLINE = (255,0,0)
 
 SPIN_WIDTH, SPIN_HEIGHT = 800, 800
 
+PLAYERS = 1
 FPS = 60
 PLAYER_SIDE = 50
 ENEM_SIDE = 50
 LSER_W, LSER_H = 100, 90
 VEL = 10
 PLAYER_COOLDOWN = 20
+
+# possible: "keyboard_space" or "arrow_enter"
+ALL_CONTROLS = {
+    'FIRST_CONTROLS': (True, "arrow_enter"), 
+    'SECOND_CONTROLS': (False, ""), 
+    'THIRD_CONTROLS': (False, "")
+}
 
 BACKGROUND_IMAGE = os.path.join('assets', 'background-black.png')
 
@@ -45,6 +56,10 @@ class SPIN_ASSET_LOADING:                                                       
     def spin_xy():
         return SPIN_WIDTH, SPIN_HEIGHT
 
+    @staticmethod
+    def number_of_players():
+        return PLAYERS
+    
     @staticmethod
     def get_fps():
         return FPS
@@ -86,40 +101,48 @@ class SPIN_ASSET_LOADING:                                                       
         return PLAYER_COOLDOWN
 
     @staticmethod
+    def control_set():
+        controls_list = []
+        for i in ALL_CONTROLS:
+            if ALL_CONTROLS.get(i)[0]:
+                controls_list.append(ALL_CONTROLS.get(i)[1])
+        return controls_list
+
+    @staticmethod
     def bg_img():
-        return BACKGROUND_IMAGE
+        return CURR_DIR + "\\" + BACKGROUND_IMAGE
 
     @staticmethod
     def green_ship():
-        return GREEN_SHIP_IMAGE
+        return CURR_DIR + "\\" + GREEN_SHIP_IMAGE
 
     @staticmethod
     def red_ship():
-        return RED_SHIP_IMAGE
+        return CURR_DIR + "\\" + RED_SHIP_IMAGE
 
     @staticmethod
     def blue_ship():
-        return BLUE_SHIP_IMAGE
+        return CURR_DIR + "\\" + BLUE_SHIP_IMAGE
 
     @staticmethod
     def player_ship():
-        return PLAYER_SHIP_IMAGE
+        return CURR_DIR + "\\" + PLAYER_SHIP_IMAGE
 
     @staticmethod
     def green_laser():
-        return LASER_GREEN_IMAGE
+        return CURR_DIR + "\\" + LASER_GREEN_IMAGE
 
     @staticmethod
     def red_laser():
-        return LASER_RED_IMAGE
+        return CURR_DIR + "\\" + LASER_RED_IMAGE
 
     @staticmethod
     def blue_laser():
-        return LASER_BLUE_IMAGE
+        return CURR_DIR + "\\" + LASER_BLUE_IMAGE
 
     @staticmethod
     def player_laser():
-        return LASER_PLAYER_IMAGE
+        return CURR_DIR + "\\" + LASER_PLAYER_IMAGE
 
     @staticmethod
     def player_outline():
@@ -135,20 +158,20 @@ class SPIN_ASSET_LOADING:                                                       
     
     @staticmethod
     def menu_font():
-        return MENU_FONT
+        return CURR_DIR + "\\" + MENU_FONT
     
     @staticmethod
     def button_font():
-        return BUTTON_FONT
+        return CURR_DIR + "\\" + BUTTON_FONT
 
     @staticmethod
     def backup_button_font():
-        return BACKUP_BUTTON_FONT
+        return CURR_DIR + "\\" + BACKUP_BUTTON_FONT
 
     @staticmethod
     def score_font():
-        return SCORE_FONT
+        return CURR_DIR + "\\" + SCORE_FONT
 
     @staticmethod
     def backup_score_font():
-        return BACKUP_SCORE_FONT
+        return CURR_DIR + "\\" + BACKUP_SCORE_FONT

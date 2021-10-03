@@ -1,7 +1,7 @@
 import pygame as pg
 import random as rndm
 from spin_assets import SPIN_ASSET_LOADING as AST
-import spin_events as SEVE
+import spin_events as s_event
 import spin_functions as sfuncs
 
 pl_ship = AST.player_ship(); pl_lser = AST.player_laser()
@@ -34,10 +34,26 @@ class Player:
     MAX_HEALTH = 100
 
     all_players = []
+    all_keybindings = {}                                                        #* {pg.K_UP: (action, self), pg.K_DOWN: (action, self), ...}
 
     @classmethod
     def clear_players(cls, what_action="clear"):
         list_clearer(cls.all_players, what_action)
+
+    @classmethod
+    def player_handler(cls, all_keys_pressed, movement_speed):
+        for i in cls.all_keybindings:
+            if all_keys_pressed[i]:
+                what_action = cls.all_keybindings.get(i)[0]
+                who = cls.all_keybindings.get(i)[1]
+                cls.action_handler(what_action, who, movement_speed)
+
+    @staticmethod
+    def action_handler(what_action, who, move_speed):
+        if what_action == "shoot":
+            who.pl_shoot()
+        else:
+            who.pl_move(what_action, move_speed)
 
     @classmethod
     def all_player_draw(cls):
@@ -62,7 +78,7 @@ class Player:
                 del p
 
         if cls.all_dead():
-            pg.event.post(SEVE.All_Dead)
+            pg.event.post(s_event.All_Dead)
 
     @classmethod
     def all_dead(cls):
@@ -71,17 +87,19 @@ class Player:
         else:
             return True
 
-    def __init__(self, pl_scrn, pl_side):
+    def __init__(self, pl_scrn, pl_side, personal_controls):
         self.pscreen = pl_scrn
         self.pscr_x, self.pscr_y = self.pscreen.get_size()
         self.side = pl_side
+        for i in personal_controls:
+            Player.all_keybindings[i[0]] = (i[1], self)
         self.pl_img = Player.P_IMG
         self.rect = self.pl_img.get_rect()
         tempx, tempy = (self.pscr_x/2 - self.side/2), (self.pscr_y - self.side - 20)  #* some formula
         self.rect.topleft = tempx, tempy
+        self.health_bar = pg.Rect(tempx, tempy + self.side, self.side, 10)      #* 10 --> formula...
         self.health = Player.MAX_HEALTH
         self.cooldown_count = 0
-        self.health_bar = pg.Rect(tempx, tempy + self.side, self.side, 10)      #* 10 --> formula...
 
         Player.all_players.append(self)
 
@@ -348,7 +366,7 @@ class Enemies:
                 for j in cls.all_elist:
                     j.set_enemheight(enem_dst, "down")
             if i.get_enemloc()[1] == i.get_curr_escr_xy()[1]:
-                pg.event.post(SEVE.Invaded)
+                pg.event.post(s_event.Invaded)
                 enem_invaded = True
                 break
         if not enem_invaded:
@@ -429,7 +447,7 @@ class Enemies:
             if l.get_lrect().colliderect(enem_obj) and l.get_ltype() == Player:
                 self.enem_destroy()
                 l.lser_delete()
-                pg.event.post(SEVE.Score_Increase)
+                pg.event.post(s_event.Score_Increase)
     
     def enem_player_coll(self, the_players):
         for p in the_players:
