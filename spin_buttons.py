@@ -105,7 +105,10 @@ class Button:
         pygame.draw.rect(self.b_displ_scr, Button.B_COLOR, self.butt_rect, 1)
         
         butt_font = Button.BUTTON_FONT.render(self.button_text, 1, (255,255,255))
-        self.b_displ_scr.blit(butt_font, (25,25))                               #TODO Set relative locations
+
+        fontx = self.butt_rect.centerx - butt_font.get_width() / 2
+        fonty = self.butt_rect.centery - butt_font.get_height() / 2
+        self.b_displ_scr.blit(butt_font, (fontx, fonty))
 
     def __repr__(self):
         return "Just another random button"
