@@ -1,9 +1,16 @@
-import pygame
+import pygame; pygame.font.init()
 import spin_events as SEVE
+from spin_assets import SPIN_ASSET_LOADING as asset
+
+try:
+    button_font = asset.button_font()
+except:
+    button_font = asset.backup_button_font()
 
 class Button:
     B_COLOR = (255, 255, 255)
     butt_lst = []
+    BUTTON_FONT = pygame.font.Font(button_font, 20)
 
     @classmethod
     def button_backup(cls):
@@ -24,18 +31,18 @@ class Button:
         cls.butt_lst.clear()
 
     @classmethod
-    def button_maker(cls, button_type, b_screen, xy_loc_tuple, dimension_tuple):
+    def button_maker(cls, button_type, b_screen, xy_loc_tuple):
         if button_type == "settings":
-            newly_created_button = _SettingsButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _SettingsButton(b_screen, xy_loc_tuple, (50,50))
         elif button_type == "custom play":
-            newly_created_button = _CustomPlayButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _CustomPlayButton(b_screen, xy_loc_tuple, (80,50))
         elif button_type == "play":
-            newly_created_button = _PlayButton(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _PlayButton(b_screen, xy_loc_tuple, (80,50))
         elif button_type == "return to menu":
-            newly_created_button = _MenuReturner(b_screen, xy_loc_tuple, dimension_tuple)
+            newly_created_button = _MenuReturner(b_screen, xy_loc_tuple, (80,50))
         else:
             print("No button of that type...")
-            newly_created_button = None                                         #? Could cause problems? Any better way of making this not work?
+            newly_created_button = None                                         #? Could cause problems?
         return newly_created_button
 
     @classmethod
@@ -79,10 +86,14 @@ class Button:
     def __init__(self, spawn_screen, spawn_loc, spawn_size):
         self.b_displ_scr = spawn_screen
         self.butt_rect = pygame.Rect((spawn_loc), (spawn_size))
+        self.button_text = "just a button"
         Button.butt_lst.append(self)
 
     def get_buttrect(self):
         return self.butt_rect
+
+    def get_button_size(self):
+        return self.butt_rect.width, self.butt_rect.height
     
     def get_bscreen(self):
         return self.b_displ_scr
@@ -92,6 +103,12 @@ class Button:
 
     def butt_draw(self):
         pygame.draw.rect(self.b_displ_scr, Button.B_COLOR, self.butt_rect, 1)
+        
+        butt_font = Button.BUTTON_FONT.render(self.button_text, 1, (255,255,255))
+
+        fontx = self.butt_rect.centerx - butt_font.get_width() / 2
+        fonty = self.butt_rect.centery - butt_font.get_height() / 2
+        self.b_displ_scr.blit(butt_font, (fontx, fonty))
 
     def __repr__(self):
         return "Just another random button"
@@ -99,6 +116,7 @@ class Button:
 class _SettingsButton(Button):
     def __init__(self, s_screen, s_spawn_loc, s_spawn_size):
         super().__init__(s_screen, s_spawn_loc, s_spawn_size)
+        self.button_text = "Settings"
     
     def is_clicked(self):
         pygame.event.post(SEVE.Open_Settings)
@@ -109,6 +127,7 @@ class _SettingsButton(Button):
 class _PlayButton(Button):
     def __init__(self, p_screen, p_spawn_loc, p_spawn_size):
         super().__init__(p_screen, p_spawn_loc, p_spawn_size)
+        self.button_text = "Play"
     
     def is_clicked(self):
         pygame.event.post(SEVE.Game_Play)
@@ -119,6 +138,7 @@ class _PlayButton(Button):
 class _CustomPlayButton(Button):
     def __init__(self,c_screen, c_spawn_loc, c_spawn_size):
         super().__init__(c_screen, c_spawn_loc, c_spawn_size)
+        self.button_text = "Custom"
 
     def is_clicked(self):
         pygame.event.post(SEVE.Custom_Play)
@@ -129,6 +149,7 @@ class _CustomPlayButton(Button):
 class _MenuReturner(Button):
     def __init__(self, m_screen, m_spawn_loc, m_spawn_size):
         super().__init__(m_screen, m_spawn_loc, m_spawn_size)
+        self.button_text = "Back"
 
     def is_clicked(self):
         pygame.event.post(SEVE.Menu_Return)
