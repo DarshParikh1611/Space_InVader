@@ -24,10 +24,19 @@ class SpaceInvaderGame:
 
     @classmethod
     def game_over(cls):
+        '''
+        Stops the main game loop
+        '''
         cls.is_game_over = True
 
     @classmethod
     def game_display(cls, dis_scrn, bckgrnd, pl, enem_class, laser_class, gme_score):
+        '''
+        Takes the window object, the pygame loaded background image, 
+        the player and enemy and laser class, as well as the current score
+
+        Dsplays it all on the window object
+        '''
         # dis_scrn.fill((0,0,0))
         dis_scrn.blit(bckgrnd, (0,0))
         pl.all_player_draw()
@@ -44,10 +53,20 @@ class SpaceInvaderGame:
 
     @classmethod
     def start_game(cls, game_window, game_background):
+        '''
+        Takes in the window object and pygame loaded background image
+
+        Starts the game
+        '''
         cls.space_inVader(game_window, game_background)
 
     @classmethod
     def space_inVader(cls, game_win, game_bg):
+        '''
+        Takes the window object and the pygame loaded background image
+
+        Creates the actual game and runs it
+        '''
         extra_time_counter = 0
         cls.session_score = 0
         run = True

@@ -15,6 +15,14 @@ class MenuPage:
 
     @staticmethod
     def page_opener(page_prompt, page_screen, page_background):
+        '''
+        Takes in a string prompt about which page to open, the screen on 
+        which the page should be opened, and the pygame loaded background image 
+        for that page
+
+        Opens the new page. Once that page gets closed it returns back to this 
+        very menu page
+        '''
         menu_button_backup = Button.button_backup()
         Button.clear_buttons()                                                  # So as to prevent collisions with buttons on the new page
         if page_prompt == "Start_Game":
@@ -27,6 +35,12 @@ class MenuPage:
 
     @classmethod
     def menu_display(cls, displ_screen, background_img, buttons_class):
+        '''
+        Takes the screen to display on, the pygame loaded background image and 
+        the entire Button class
+        
+        Display them all on the menu screen
+        '''
         displ_screen.fill((0,0,0))
         displ_screen.blit(background_img, (0,0))
         
@@ -41,6 +55,12 @@ class MenuPage:
 
     @classmethod
     def main_menu(cls, menu_displ, bground):
+        '''
+        Takes the screen object on which it should display and a 
+        pygame loaded background image
+        
+        Creates a running menu from where other game actions can be performed
+        '''
         mds_x, mds_y = menu_displ.get_size()
         settings_x, settings_y = mds_x - 60, mds_y - 60
         play_x, play_y = (mds_x / 2) - 80, mds_y - (mds_y / 2) + 50

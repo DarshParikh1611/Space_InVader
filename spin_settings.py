@@ -5,12 +5,23 @@ from spin_buttons import Button
 class SettingsPage:
     @staticmethod
     def menu_returner(text_prompt, page_running):
+        '''
+        Takes in a string prompt, indicating which button was pressed on screen
+
+        If Back button is pressed it signals to close the settings page, 
+        ending the process
+        '''
         if text_prompt == "Back_Menu":
             page_running = False
         return page_running
 
     @staticmethod
     def settings_draw(settings_window, settings_background, buttons_class):
+        '''
+        Takes in the window object, the pygame loaded background image, and the button class
+
+        Displys them all on the settings page
+        '''
         settings_window.fill((0,0,0))
         settings_window.blit(settings_background, (0,0))
         buttons_class.all_button_draw()
@@ -23,6 +34,11 @@ class SettingsPage:
 
     @classmethod
     def settings_page(cls, settings_win, settings_bg):
+        '''
+        takes in the window object and a pygame loaded background image
+
+        Generates a settings page to edit the 
+        '''
         sd_x, sd_y = settings_win.get_size()
         Button.button_maker("return to menu", settings_win, (sd_x-90, sd_y-60)) # Creates the Back button
         settings_run = True
